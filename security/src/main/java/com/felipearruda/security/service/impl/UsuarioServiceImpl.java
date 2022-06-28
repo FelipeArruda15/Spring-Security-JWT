@@ -23,16 +23,19 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     @Override
     public Usuario salvarUsuario(Usuario usuario) {
+        log.info("Salvando o usuário {}", usuario.getNome());
         return usuarioRepository.save(usuario);
     }
 
     @Override
     public Role salvarRole(Role role) {
+        log.info("Salvando a role {}", role.getPerfil());
         return roleRepository.save(role);
     }
 
     @Override
     public void addRoleParaUsuario(String username, String perfil) {
+        log.info("Adicionando a role {} ao usuário {}", perfil, username);
         Usuario usuario = usuarioRepository.findByUsername(username);
         Role role = roleRepository.findByPerfil(perfil);
         usuario.getRoles().add(role);
@@ -40,11 +43,13 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     @Override
     public Usuario buscarUsuario(String usuario) {
+        log.info("Buscando o usuário {}", usuario);
         return usuarioRepository.findByUsername(usuario);
     }
 
     @Override
     public List<Usuario> listarUsuarios() {
+        log.info("Buscando todos os usuários");
         return usuarioRepository.findAll();
     }
 }
