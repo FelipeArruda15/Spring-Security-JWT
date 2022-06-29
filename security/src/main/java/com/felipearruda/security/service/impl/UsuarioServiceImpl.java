@@ -7,19 +7,45 @@ import com.felipearruda.security.repositories.UsuarioRepository;
 import com.felipearruda.security.service.UsuarioService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 @Transactional
 @Slf4j
-public class UsuarioServiceImpl implements UsuarioService {
+public class UsuarioServiceImpl implements UsuarioService, UserDetailsService {
 
     private final UsuarioRepository usuarioRepository;
     private final RoleRepository roleRepository;
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        Usuario usuario = usuarioRepository.findByUsername(username);
+
+        if(usuario == null){
+            log.info("Usuário não encontrado");
+            throw new UsernameNotFoundException("Usuário não encontrado");
+        }else{
+            log.info("Usuário: {} encontrado com sucesso", username);
+        }
+
+        Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
+        usuario.getRoles().forEach((role -> {
+            authorities.add(new SimpleGrantedAuthority(role.getPerfil()));
+        }));
+        
+        return new org.springframework.security.core.userdetails.User(usuario.getUsername(), usuario.getSenha(), authorities);
+    }
 
     @Override
     public Usuario salvarUsuario(Usuario usuario) {
@@ -52,4 +78,5 @@ public class UsuarioServiceImpl implements UsuarioService {
         log.info("Buscando todos os usuários");
         return usuarioRepository.findAll();
     }
+
 }
