@@ -43,7 +43,7 @@ public class UsuarioServiceImpl implements UsuarioService, UserDetailsService {
         usuario.getRoles().forEach((role -> {
             authorities.add(new SimpleGrantedAuthority(role.getPerfil()));
         }));
-        
+
         return new org.springframework.security.core.userdetails.User(usuario.getUsername(), usuario.getSenha(), authorities);
     }
 
