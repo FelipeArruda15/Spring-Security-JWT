@@ -39,6 +39,7 @@ public class UsuarioController {
     public void addRoleaoUsuario(@RequestBody FormFuncaodoUsuario form){
         usuarioService.addRoleParaUsuario(form.getUsername(), form.getPerfil());
     }
+
 }
 
 @Data
